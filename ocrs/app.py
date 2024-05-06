@@ -2,6 +2,7 @@
 
 import base64
 from logging.config import dictConfig
+import re
 
 import ddddocr
 from flask import Flask, request
@@ -32,6 +33,7 @@ ocr_engine = ddddocr.DdddOcr()
 def ocr():
     app.logger.info("ocr request received, image size: %d", len(request.json["image_base64"]))
     image_base64 = request.json["image_base64"]
+    image_base64 = re.sub("data:image/\\w+;base64,", "", image_base64)
     image_bytes = base64.b64decode(image_base64.encode("utf-8"))
     text = ocr_engine.classification(image_bytes)
     app.logger.info("ocr result: %s", text)
